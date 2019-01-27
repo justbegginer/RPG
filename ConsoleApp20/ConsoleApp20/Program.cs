@@ -8,12 +8,18 @@ namespace ConsoleApp20
 {
     class Program
     {
+          public static int XP = 0;
+          public static int Lvl = 1;
+          public static int Coins = 0;
+          public static int Shava;
+          public static int Portvein777;
         static void Main(string[] args)
-        {
+        {                       
             string yourname = "";
             Start.Welcome();
             Fight Fight = new Fight();
             Fight.fight();
+
             //Random random = new Random();        
             //int damage = random.Next(0, 10);
             //int accuracy = 75;
@@ -22,23 +28,26 @@ namespace ConsoleApp20
             //Person.Fight(human, spiderman);
             //Console.ReadLine();
         }
-        class Person
-        {
-            public float Health;
-            public string Name;
-            public float Damage;
-            public float Accuracy;
+        //class Person
+        //{
+        //    public int Health = 100;
+        //    public string Name;
+        //    public float Damage = 10;
+        //    public float Accuracy = 7;
 
-            public  Person(float health, float damage, float accuracy)
-            {
-                health = 100;
-                Health = health;
-                damage = 10;
-                Damage = damage;
-                accuracy = 0.7f;
-                Accuracy = accuracy;
-                
-            }
+        //    public Person(//int health, int damage, int accuracy
+        //        )
+        //    {
+        //        CharacteristicsAndUpgrades CurrentCharacteristic = new CharacteristicsAndUpgrades(0);
+        //        Damage=
+        //        // health = 100;
+        //        //Person.Health = health;
+        //        //int damage = 10;
+        //        //Damage = damage;
+        //        //float accuracy = 0.7f;
+        //        //Accuracy = accuracy;
+
+        //    }
 
             //public void GetInfo()
             //{
@@ -175,7 +184,7 @@ namespace ConsoleApp20
 
             //    }
 
-        }
+        
         //class YourHero : Person
         //{
         //    public string SuperPower;
@@ -187,78 +196,154 @@ namespace ConsoleApp20
         class Fight
         {
             public float Fdamage;
-            public float Fhealth;
+            public int Fhealth;
             public float Faccuracy;
             public static int Stage = 1;
             public Fight()
             {
-                
+                CharacteristicsAndUpgrades You = new CharacteristicsAndUpgrades(0);
+                Fdamage = You.Damage;
+                Fhealth = You.Health;
+                Faccuracy = You.Accuracy;
             }
-            public  void fight()
+            public void fight()
             {
-                ENEMIES enemy = new ENEMIES(0,0,0,"","");
-                ENEMIES.Enemies(out enemy);
-                //Console.WriteLine(enemy.Damage);
-                //Console.ReadKey();
+                
+                ENEMIES enemy = new ENEMIES(0, 0, 0, "", "",0);
+                ENEMIES.Enemies(out enemy,Stage);                
+                Class YourClass = new Class(Start.Class);                              
                 Console.ForegroundColor = ConsoleColor.DarkRed;
-                Console.Write("\n"+"Ваш противник ");
+                Console.Write("\n" + "Ваш противник ");
                 Console.ResetColor();
-                Console.Write(enemy.Name+"\n"+"Биография");
+                Console.Write(enemy.Name + "\n" + "Биография");
                 Console.ForegroundColor = ConsoleColor.DarkGreen;
-                Console.Write(enemy.Definition);
-                Console.ResetColor();                             
-                while ( enemy.Health!=0 && Fhealth!=0)
-                {                                                       
-                        Class.Attacks();
-                        Fdamage *= Class.Damage;
-                        Fhealth += Class.Health;                    
-                }
-                Stage++;
-            }
+                Console.Write(enemy.Definition + "\n" + "Жизни-"+enemy.Health + "\n"+"Урон-"+enemy.Damage+"\n"+"Точность-"+enemy.Accuracy*10+"%");
+                Console.ResetColor();
+                //f@cking_test Console.WriteLine("как оно "+Fdamage+" "+enemy.Health);
+                while (enemy.Health != 0 && Fhealth != 0)
+                {                    
+                    Console.WriteLine("\n"+Start.Name + Fhealth + "-жизни  " + "\n" + enemy.Health + " жизни противника" + "\n" + Fdamage + " дамаг на старте");
+                    Console.ReadLine();
 
+                    float Xdamage = 0;
+                    float Xaccuracy = 0;
+                    Class.Attacks(out Xdamage, out Xaccuracy);
+                    // Console.WriteLine(Xdamage+" "+Xaccuracy);
+                    //Console.ReadLine();
+                    Fdamage *= Class.Damage;
+                    // Console.WriteLine(Fdamage);
+                    //Console.ReadKey();
+                    Fhealth += Class.Health;
+                    Random probability = new Random();
+                    int probabilityMy = probability.Next(1, 10);
+                    if (probabilityMy < Faccuracy * Xaccuracy)
+                    {
+                        enemy.Health -= (int)(Xdamage * Fdamage);
+                        enemy.Health = CheckHP(enemy.Health);
+                        Console.WriteLine(Start.Name + " наносит " + (int)(Xdamage * Fdamage) + " единиц урона");
+                        
+                    }
+                    else
+                    {
+                        Console.WriteLine("Вы промахнулись...");
+                    }
+                    int probabilityEnemy = probability.Next(1, 10);
+                    if (probabilityEnemy < enemy.Accuracy)
+                    {
+                        Fhealth -= enemy.Damage;
+                        Fhealth = CheckHP(Fhealth);
+                        Console.WriteLine(enemy.Name + " нанёс вам " + enemy.Damage + " единиц урона");
+                        
+                    }
+                    else
+                    {
+                        Console.WriteLine(enemy.Name + " промахнулся...");
+                    }                   
+                }
+                if (Fhealth==0)
+                {
+                    GameOver();
+                }                
+
+                CharacteristicsAndUpgrades XpForWinner= new CharacteristicsAndUpgrades (enemy.GainedXp);               
+                Console.WriteLine(""+XP);
+                Stage++;
+                Console.ReadKey();
+            }
+            public static void FightMechanic()
+            {
+                while (true)
+                {
+
+                }
+            }
+            public static int CheckHP(int Hp)
+            {
+                if (Hp <= 0)
+                {
+                    Hp = 0;
+                }
+                return Hp;
+            }
         }
-        class ENEMIES:Person
+        class ENEMIES 
 
         {
-            public float Health;
+            public int Health;
+            public int Damage;
+            public int Accuracy;
             public string Name;
             public string Definition;
-            public ENEMIES(float health,float damage,float accuracy,string name,string definition) : base(health,damage,accuracy)
+            public int GainedXp;
+            public ENEMIES(int health, int damage, int accuracy, string name, string definition,int gainedXP)// : base(health, damage, accuracy)
             {
                 Health = health;
+                Damage = damage;
+                Accuracy = accuracy;
                 Name = name;
                 Definition = definition;
+                GainedXp = gainedXP;
+
             }
-        public static void Enemies(out ENEMIES enemy)
-        {
-            enemy = new ENEMIES(0, 0, 0, "", "");
-            int x = Fight.Stage;
-            switch (x)
+            public static void Enemies(out ENEMIES enemy,int i)
             {
-                case 1:
-                        enemy = new ENEMIES(0,0,0, "Дед Пантилимон","-старый алкоголик");
-                        
-                    break;
-                case 2:
-                    break;
-                case 3:
-                    break;
-                case 4:
-                    break;
-                case 5:
-                    break;
+                enemy = new ENEMIES(0, 0, 0, "", "",0);
+                int x = i;
+                switch (x)
+                {
+                    case 1:
+                        enemy = new ENEMIES(100, 10, 5, "Дед Пантилимон", "-старый алкоголик",5);
+                        break;
+                    case 2:
+                        enemy = new ENEMIES(100,10,6, "Данила Закладчик 16 лет", "-обладает необычайно ловкостью и скоростью, " +
+                            "что впринципе и необходимо для его профессии ,за небывалую продуктивность барыга дал ему кличку Стахановец", 10);
+                        break;
+                    case 3:
+                        enemy = new ENEMIES(130,14,6, "Саня Штопор 34 года", "-быковатый мужик ,в детстве 2 дня занимался боксом и считает себя порядочным спортсменом ," +
+                            "его девиз:'Порхай как перхоть, жаль как моя жена' .Своё прозвище получил за то ,что может открыть Балтику зубами(глазом). ", 15);
+                        break;
+                    case 4:
+                        enemy = new ENEMIES(150,20,6, "Зина Джаггернаут 40 лет", "- очень сильная и почти независимая женщина, обладает необычайной силой ," +
+                            "подрабатывает на стройке в роли подъёмного крана, имеет навыками ближнего и дальнего боя ,которые она приобрела в драках с мужем- Саней Штопором.",25);
+                        break;
+                    case 5:
+                        enemy = new ENEMIES(150,20,7, "Лёлик Еболик 10 лет", "-невыносимый ребёнок,признан акушерами недоразвитым,его психотерапевт спустя сеанс застрелился", 35);
+                        break;
+                    case 6:
+                        enemy = new ENEMIES(50,25,10, "Гарри Шпроттер 19 лет", ")- мальчик обладающий навыком сироты ,имеет огромное терпение (на протяжении семи лет безуспешно шипперил друзей," +
+                            "на протяжении всей жизни подвергался домогательствам лысого мужика )",50);
+                        break;
+                }
             }
-        }
-    }
+            public static void description()
+            {
 
-        class Constant
-        {
-
-        }
+            }
+        }        
         // Ильич 56 лет-пожилой десантник ,прошёл несколько войн ,один ,без отряда,сам себе командир.Процесс дыхания у него проходит за счёт беломорканала##вечно воскресает
         // Колян Муромец 46 лет-получил своё прозвище не случайно,половину своей жизни провёл в постели , умеет медитировать и ломать волю противника своим взглядом (ну конечно ,ведь этот человек около 20 лет смотрел в одну точку).##медиум и просто вафлист
         // Петрович Хранитель Совка 75 лет- поклоник Иосифа Висарионовича , проводил(до сих пор проводит) репрессии во славу вождя .Нелицеприятные высказывания в адрес Сталина приводят его в буйство,слова про развал Союза ослабляют защиту.Капиталисты помечаются им как враги народа.Имеет множество психических расстройст,местные до сих пор в шоке ,как его ещё не забрали санитары(на самом деле медработники боятся его,впрочем как и все).##берсерк со слабой и легко снижаемой защитой 
-        // Саня Штопор 34 лет-быковатый мужик ,в детстве 2 дня занимался боксом и считает себя порядочным спортсменом ,его девиз:"Порхай как перхоть ,жаль как моя жена " .Своё прозвище получил за то ,что может открыть Балтику зубами(глазом). 
+        // Саня Штопор 34 года-быковатый мужик ,в детстве 2 дня занимался боксом и считает себя порядочным спортсменом ,его девиз:"Порхай как перхоть ,жаль как моя жена " .Своё прозвище получил за то ,что может открыть Балтику зубами(глазом). 
         // Зина Джаггернаут 40 лет- очень сильная и почти независимая женщина, обладает необычайной силой ,подрабатывает на стройке в роли подъёмного крана, имеет навыками ближнего и дальнего боя ,которые она приобрела в драках с мужем- Саней Штопором.
         // Гарри Шпроттер (19 лет)- мальчик обладающий навыком сироты ,имеет огромное терпение (на протяжении семи лет безуспешно шипперил друзей,на протяжении всей жизни подвергался домогательствам лысого мужика )
         // Лёлик Еболик 10 лет -невыносимый ребёнок,признан акушерами недоразвитым,его психотерапевт спустя сеанс застрелился
@@ -278,7 +363,7 @@ namespace ConsoleApp20
             }
             public static void chooseyoursuperpower()
             {
-                
+
                 Console.Write("1-");
                 Berzerk();
                 Console.WriteLine("");
@@ -289,11 +374,14 @@ namespace ConsoleApp20
                 Knight();
                 Console.WriteLine("");
                 int x = 0;
-                Errors.falsesint(x, out x);                               
+                Errors.falsesint(x, out x);
+                //Console.WriteLine("sin");
+                //Console.ReadLine();
                 Class = x;
-
-                Start.presentation(x);
-            }            
+                //Console.WriteLine("sin");
+                //Console.ReadLine();
+                presentation(x);
+            }
             public static void Berzerk()
             {
                 Console.ForegroundColor = ConsoleColor.DarkYellow;
@@ -302,9 +390,9 @@ namespace ConsoleApp20
             }
             public static void berzerkability()
             {
-                
+
             }
-            
+
             public static void Healer()
             {
                 Console.ForegroundColor = ConsoleColor.DarkGreen;
@@ -325,44 +413,44 @@ namespace ConsoleApp20
             {
 
             }
-            public  static void presentation(int x)
+            public static void presentation(int x)
             {
 
                 Console.Write("Ваш персонаж " + Start.Name + " ");
 
                 switch (x)
                 {
-                    case 1:                                                
-                        Berzerk();                        
+                    case 1:
+                        Berzerk();
                         break;
-                    case 2:                       
+                    case 2:
                         Healer();
                         break;
                     case 3:
                         Knight();
                         break;
                 }
-                
+                Console.WriteLine();
             }
-                
+
         }
-        
+
         class Class
         {
-            public static bool Invincibility=false;
+            public static bool Invincibility = false;
             public static bool HolyShield = false;
-            public static float Damage=1;
-            public static float Health=0;
-            public static float Accuracy=1;
+            public static float Damage = 1;
+            public static int Health = 0;
+            public static float Accuracy = 1;
             public Class(int x)
             {
                 switch (x)
                 {
                     case 1:
-                            Damage = 1.1f;
+                        Damage = 1.1f;
                         break;
                     case 2:
-                            Health = 5;
+                        Health = 5;
                         break;
                     case 3:
                         Invincibility = true;
@@ -372,13 +460,15 @@ namespace ConsoleApp20
                 }
 
             }
-            public static void Attacks()
+            public static void Attacks(out float Xdamaage, out float Xaccuracy)
             {
-                
+
+
+                float trashXdamage = 0; float trashXaccuracy = 0;
                 switch (Start.Class)
                 {
                     case 1:
-                        BerzerkAttack();
+                        BerzerkAttack(out trashXdamage, out trashXaccuracy);
                         break;
                     case 2:
                         HealerAttack();
@@ -386,10 +476,32 @@ namespace ConsoleApp20
                     case 3:
                         KnightAttack();
                         break;
+
                 }
+                Xdamaage = trashXdamage; Xaccuracy = trashXaccuracy;
+
             }
-            public static void BerzerkAttack()
+            public static void BerzerkAttack(out float Xdamage, out float Xaccuracy)
             {
+                Xdamage = 0; Xaccuracy = 0;
+                Console.WriteLine("Выберите атаку \n 1-Опрометчивый удар(сильный ,но не точный удар) \n 2-Серия(пару ударов но с пониженной точностью и дамагом) \n 3-Точный удар");
+                int choice = Convert.ToInt32(Console.ReadLine());
+                
+                switch (choice)
+                {
+                    case 1:
+                        Xdamage = 1.5f;
+                        Xaccuracy = 0.75f;
+                        break;
+                    case 2:
+                        //!!!!! допилить механику
+                        break;
+                    case 3:
+                        Xaccuracy = 1.25f;
+                        Xdamage = 1.1f;
+                        break;
+
+                }
 
             }
             public static void HealerAttack()
@@ -403,12 +515,13 @@ namespace ConsoleApp20
         }
         class Errors
         {
-            public static void falsesint(int y,out int z)
+            public static void falsesint(int y, out int z)
             {
                 Start:
+                string x = Console.ReadLine();
                 try
                 {
-                    y = Convert.ToInt16(Console.ReadLine());
+                    y = Convert.ToInt16(x);
                 }
                 catch
                 {
@@ -419,9 +532,11 @@ namespace ConsoleApp20
                 }
                 z = y;
             }
-            public static void falsesdouble(double y,out double z)
+            public static void falsesdouble(double y, out double z)
             {
                 Start:
+                string x = Console.ReadLine();
+
                 try
                 {
                     y = Convert.ToDouble(Console.ReadLine());
@@ -435,7 +550,7 @@ namespace ConsoleApp20
                 }
                 z = y;
             }
-            public static void massive(int[] mass,int x)
+            public static void massive(int[] mass, int x)
             {
                 Start:
                 try
@@ -450,7 +565,367 @@ namespace ConsoleApp20
                     goto Start;
                 }
             }
+           
+            public static void QuickAccess(string commands)
+            {
+                switch (commands)
+                {
+                    case "buy":
+                    case "b":
+                        Market market = new Market();                       
+                        break;
+
+                }
+            }
+            public static void HotKey(string commands)
+            {
+                switch (commands)
+                {
+                    case "s":
+                        break;
+                    case "p":
+                        break;
+                }
+            }
+
         }
-        
+        class CharacteristicsAndUpgrades
+        {
+            public int Damage=10;
+            public int Health = 100;
+            public int Accuracy = 7;
+            
+            
+            public CharacteristicsAndUpgrades(int xp)
+            {
+                XP += xp;
+                Levelups();
+            }
+            public  void Levelups()
+            {
+                Console.ForegroundColor = ConsoleColor.DarkMagenta;
+                if (XP>=10&&Lvl==1)
+                {
+                    Console.WriteLine("Повышение уровня!");
+                    XP =XP- 10;
+                    Lvl = 2;
+                    Upgrades();
+                }
+                else if(XP>=25&&Lvl==2)
+                {
+                    Console.WriteLine("Повышение уровня!"); 
+                    Lvl = 3;
+                    XP =XP- 25;
+                    Upgrades();
+                }
+                else if (XP>=50&&Lvl==3)
+                {
+                    Console.WriteLine("Повышение уровня!");
+                    Lvl = 4;
+                    XP = XP - 50;
+                    Upgrades();
+                }
+                else if (XP>=100&&Lvl==4)
+                {
+                    Console.WriteLine("Повышение уровня!");
+                    Lvl = 5;
+                    XP = XP - 100;
+                    Upgrades();
+                }
+                else if (XP>=200 && Lvl==5)
+                {
+                    Console.WriteLine("");
+                    Lvl = 6;
+                    XP = XP - 200;
+                    Upgrades();
+                }
+                else
+                {
+
+                }
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("Ваш уровень "+Lvl);
+                Console.ResetColor();
+               
+            }
+            public void Upgrades()
+            {
+               
+                switch(Lvl)
+                {
+                    case 1:
+                        
+                        break;
+                    case 2:
+                        Health += 10;
+                        Console.WriteLine("Ваше здоровье выросло на 10 елиниц");                        
+                        break;
+                    case 3:                        
+                        Damage += 1;
+                        Console.WriteLine("Ваш урон выросл на 1 единицу");                        
+                        break;
+                    case 4:
+                        Health += 15;
+                        Console.WriteLine("Ваше здоровье выросло на 15 единиц");
+                        break;
+                    case 5:
+                        Damage += 2;
+                        Console.WriteLine("Ваш урон вырос на 2 единицы");
+                        break;
+                    case 6:
+                        Accuracy += 1;
+                        Console.WriteLine("Ваша точность выросла на 10% ");
+                        break;
+                      
+                }                                            
+            }
+
+        }
+             
+        class Adventure
+        {
+            public string AdventureLogs;
+            public Adventure()
+            {
+                Random random = new Random();
+                int OneOfAdventures=random.Next(0,3);
+                switch (OneOfAdventures)
+                {
+                    case 0:
+
+                    case 1:
+                        GetCoins(); 
+                        break;
+                    case 2:
+                        Fight GoToFight = new Fight();
+                        GoToFight.fight();                        
+                        break;
+                    case 3:
+                        GetXp();
+                        break;
+                }
+            }
+            private static void GetCoins()
+            {
+                Console.WriteLine("");
+                Coins +=2;
+            }
+            private static void GetXp()
+            {
+                Console.WriteLine("");
+                XP += 3;
+            }
+            private static void GetLoot()
+            {
+                Console.WriteLine("");
+                Random random = new Random();
+                int probability = random.Next(0,4);
+                switch (probability)
+                {
+                    case 0:
+                        Console.WriteLine("");
+                        Shava += 1;
+                        break;
+                    case 1:
+                    case 2:
+                    case 3:
+                        Console.WriteLine("");
+                        break;
+                    case 4:
+                        Portvein777 += 1;
+                        Console.WriteLine("");
+                        break;
+                }
+            }
+       
+        }
+
+
+            public static void GameOver()
+
+            {
+                Adventure End = new Adventure();
+                Console.ForegroundColor = ConsoleColor.DarkRed;
+                Console.WriteLine("Вы погибли ");
+                Console.ResetColor();
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("События " + End.AdventureLogs);
+                Console.ResetColor();
+                Console.ForegroundColor = ConsoleColor.DarkBlue;
+                Console.WriteLine("Вы прошли " + Fight.Stage + " боёв и победили таких противнико как");
+                for (int i = 0; i < Fight.Stage; i++)
+                {
+
+                    ENEMIES DefeatedEnemy = new ENEMIES(0, 0, 0, "", "", 1);
+                    ENEMIES.Enemies(out DefeatedEnemy, i);
+                    Console.WriteLine(DefeatedEnemy.Name + DefeatedEnemy.Definition);
+                }
+                Console.ForegroundColor = ConsoleColor.DarkGreen;
+                Console.ReadKey();
+            }           
+        public static void CoinsTest()
+        {
+
+
+                Loot loot = new Loot(10, 1, 1);
+                Loot testloot = new Loot(0, 0, 0);
+                Console.WriteLine(Coins+ " "+Shava+" "+Portvein777);
+                Console.ReadLine();
+            
+        }
+        class Loot
+        {
+            
+            public string Runs;
+           
+            public Loot(int coins,int shava,int portvein)
+            {
+                Coins += coins;
+                Shava += shava;
+                Portvein777 += portvein;
+            }
+            public static void OpenBackpack()
+            {
+                Loot loot = new Loot(0,0,0);
+                Console.WriteLine("Содержимое рюкзака:");
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine("Шаверма из местной фауны");
+                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.WriteLine("Портвейн Мгновения Ярость ,а также шевенизм ,рассизм ,коммунизм ,что-то из этого . "+Portvein777+"штук(и)");
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                Console.WriteLine(Coins+" деревянных");
+
+            }
+        }
+        class Armor
+        {
+            public int Helmet;
+            public int BodyArmor;
+            public int Pants;
+            public static void YourArmor()
+            {
+                Armor ArmorNow = new Armor();
+                Console.WriteLine("Твоя броня");
+                switch(ArmorNow.Helmet)
+                {
+                    case 1:
+                        Console.WriteLine("");
+                        break;
+                    case 2:
+                        Console.WriteLine("");
+                        break;
+                    case 3:
+                        Console.WriteLine("");
+                        break;
+                }
+                switch (ArmorNow.BodyArmor)
+                {
+                   case 1:
+                        Console.WriteLine("");
+                        break;
+                    case 2:
+                        Console.WriteLine("");
+                        break; 
+                    case 3:
+                        Console.WriteLine("");
+                        break;
+                }
+                switch(ArmorNow.Pants)
+                {
+                    case 1:
+                        Console.WriteLine("");
+                        break;
+                    case 2:
+                        Console.WriteLine("");
+                        break;
+                    case 3:
+                        Console.WriteLine("");
+                        break;
+                }
+            }
+        }
+        class Market
+        {
+            public int HelmetCondition;
+            public int BodyArmorCondition;
+            public int PantsCondition;
+            public Market()
+            {
+                Armor armor = new Armor();
+                HelmetCondition = armor.Helmet;
+                BodyArmorCondition = armor.BodyArmor;
+                PantsCondition = armor.Pants;
+               
+            }
+            public static void Buying()
+            {
+                Market market = new Market();
+                Start:
+                Console.WriteLine("Что хотите приобрести? \n 1-Апгрейд ушанки \n 2-Апгрейд делового пиджака \n 3-Апгрейд спортивок \n 4-Покупка расходников \n 5-Продажа расходников ");
+                int entering = Convert.ToInt32(Console.ReadLine());
+                switch (entering)
+
+                {
+                    case 1:
+                        switch (market.HelmetCondition)
+                        {
+                            
+                        }
+                        break;
+                    case 2:
+                        switch (market.BodyArmorCondition)
+                        {
+
+                        }
+                        break;
+                    case 3:
+                        switch (market.PantsCondition)
+                        {
+
+                        }
+                        break;
+                    case 4:
+                        Console.WriteLine("");
+                        break;
+                    case 5:
+                        Console.WriteLine("");
+                        break;
+                    default:
+                        Console.WriteLine("Неверное значение.Уйти в меню покупок[b] или выйти из магазина[любая другая кнопка]");
+                        string y = Console.ReadLine();
+                        if (y=="b")
+                        {
+                            goto Start;
+                        }
+                        break;
+                }
+            
+                Console.WriteLine();
+            
+            }
+            
+            
+        }
+        public static void Debug()
+        {
+            CharacteristicsAndUpgrades characteristics = new CharacteristicsAndUpgrades(11);
+            Console.WriteLine("Опыт равен "+XP);
+            CharacteristicsAndUpgrades characteristicsAndUpgrades = new CharacteristicsAndUpgrades(50);
+            Console.WriteLine("Опыт равен "+XP);
+            Console.ReadKey();
+        }
+        class Entering
+        {
+            public void EnterFight()
+            {
+
+            }
+            public void EnterAdventure()
+            {
+
+            }
+        }
+
     }
 }
+
