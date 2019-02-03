@@ -13,12 +13,14 @@ namespace ConsoleApp20
           public static int Coins = 0;
           public static int Shava;
           public static int Portvein777;
+        public static int Stage = 1;
         static void Main(string[] args)
         {                       
             string yourname = "";
             Start.Welcome();
-            Fight Fight = new Fight();
-            Fight.fight();
+            Adventure adventure = new Adventure();
+            //Fight Fight = new Fight();
+            //Fight.fight();
 
             //Random random = new Random();        
             //int damage = random.Next(0, 10);
@@ -198,7 +200,7 @@ namespace ConsoleApp20
             public float Fdamage;
             public int Fhealth;
             public float Faccuracy;
-            public static int Stage = 1;
+           
             public Fight()
             {
                 CharacteristicsAndUpgrades You = new CharacteristicsAndUpgrades(0);
@@ -240,8 +242,7 @@ namespace ConsoleApp20
                     {
                         enemy.Health -= (int)(Xdamage * Fdamage);
                         enemy.Health = CheckHP(enemy.Health);
-                        Console.WriteLine(Start.Name + " наносит " + (int)(Xdamage * Fdamage) + " единиц урона");
-                        
+                        Console.WriteLine(Start.Name + " наносит " + (int)(Xdamage * Fdamage) + " единиц урона");                      
                     }
                     else
                     {
@@ -266,7 +267,7 @@ namespace ConsoleApp20
                 }                
 
                 CharacteristicsAndUpgrades XpForWinner= new CharacteristicsAndUpgrades (enemy.GainedXp);               
-                Console.WriteLine(""+XP);
+                //Console.WriteLine(""+XP);
                 Stage++;
                 Console.ReadKey();
             }
@@ -687,55 +688,67 @@ namespace ConsoleApp20
             public string AdventureLogs;
             public Adventure()
             {
-                Random random = new Random();
-                int OneOfAdventures=random.Next(0,3);
-                switch (OneOfAdventures)
+                while (true)
                 {
-                    case 0:
-
-                    case 1:
-                        GetCoins(); 
-                        break;
-                    case 2:
-                        Fight GoToFight = new Fight();
-                        GoToFight.fight();                        
-                        break;
-                    case 3:
-                        GetXp();
-                        break;
+                    Console.WriteLine("");
+                    Random random = new Random();
+                    int OneOfAdventures=random.Next(0,3);                
+                    switch (OneOfAdventures)
+                    {
+                        case 0:
+                            GetLoot();
+                            break;
+                        case 1:
+                            GetCoins();
+                            break;
+                        case 2:
+                            Fight GoToFight = new Fight();
+                            GoToFight.fight();
+                            break;
+                        case 3:
+                            GetXp();
+                            break;
+                    }
+                    Console.ResetColor();
                 }
             }
             private static void GetCoins()
             {
-                Console.WriteLine("");
-                Coins +=2;
+                Console.BackgroundColor = ConsoleColor.DarkYellow;
+                Coins += 2;
+                Console.WriteLine("Ограбив ларёк ,вы получили две монеты ");
+                
             }
             private static void GetXp()
             {
-                Console.WriteLine("");
-                XP += 3;
+                Console.BackgroundColor = ConsoleColor.DarkMagenta;
+                Console.WriteLine("Вы размотали пару местных синяков и получили "+(2*Stage)+" единиц опыта");
+                XP += 2 * Stage;
             }
             private static void GetLoot()
             {
-                Console.WriteLine("");
+                Console.WriteLine("Вы решили порыться в мусорке");
                 Random random = new Random();
                 int probability = random.Next(0,4);
                 switch (probability)
                 {
                     case 0:
-                        Console.WriteLine("");
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        Console.WriteLine("Вы нашли шаву ... почти свежую");
                         Shava += 1;
                         break;
                     case 1:
                     case 2:
                     case 3:
-                        Console.WriteLine("");
+                        Console.WriteLine("Вы ничего не нашли");
                         break;
                     case 4:
                         Portvein777 += 1;
-                        Console.WriteLine("");
+                        Console.ForegroundColor = ConsoleColor.DarkYellow;
+                        Console.WriteLine("Портвейн ,который с годами проведёнными в мусорке , стал только лучше");
                         break;
                 }
+               
             }
        
         }
@@ -752,8 +765,8 @@ namespace ConsoleApp20
                 Console.WriteLine("События " + End.AdventureLogs);
                 Console.ResetColor();
                 Console.ForegroundColor = ConsoleColor.DarkBlue;
-                Console.WriteLine("Вы прошли " + Fight.Stage + " боёв и победили таких противнико как");
-                for (int i = 0; i < Fight.Stage; i++)
+                Console.WriteLine("Вы прошли " + Stage + " боёв и победили таких противнико как");
+                for (int i = 0; i < Stage; i++)
                 {
 
                     ENEMIES DefeatedEnemy = new ENEMIES(0, 0, 0, "", "", 1);
@@ -762,6 +775,7 @@ namespace ConsoleApp20
                 }
                 Console.ForegroundColor = ConsoleColor.DarkGreen;
                 Console.ReadKey();
+                Environment.Exit(0);
             }           
         public static void CoinsTest()
         {
@@ -780,86 +794,89 @@ namespace ConsoleApp20
            
             public Loot(int coins,int shava,int portvein)
             {
-                Coins += coins;
-                Shava += shava;
-                Portvein777 += portvein;
+                //Coins += coins;
+                //Shava += shava;
+                //Portvein777 += portvein;
             }
             public static void OpenBackpack()
             {
-                Loot loot = new Loot(0,0,0);
-                Console.WriteLine("Содержимое рюкзака:");
-                Console.ForegroundColor = ConsoleColor.Cyan;
-                Console.WriteLine("Шаверма из местной фауны");
-                Console.ForegroundColor = ConsoleColor.Blue;
-                Console.WriteLine("Портвейн Мгновения Ярость ,а также шевенизм ,рассизм ,коммунизм ,что-то из этого . "+Portvein777+"штук(и)");
-                Console.ForegroundColor = ConsoleColor.DarkYellow;
-                Console.WriteLine(Coins+" деревянных");
+                
+               
 
             }
         }
         class Armor
         {
-            public int Helmet;
-            public int BodyArmor;
-            public int Pants;
+            public static int Helmet=0;
+            public  static int BodyArmor=0;
+            public static int Pants=0;
             public static void YourArmor()
             {
-                Armor ArmorNow = new Armor();
+                //Armor ArmorNow = new Armor();
                 Console.WriteLine("Твоя броня");
-                switch(ArmorNow.Helmet)
+                switch(Helmet)
                 {
+                    case 0:
+                        Console.WriteLine("Без головного убора");
+                        break;
                     case 1:
-                        Console.WriteLine("");
+                        Console.WriteLine("Рваная ушанка");
                         break;
                     case 2:
-                        Console.WriteLine("");
+                        Console.WriteLine("Будёновка");
                         break;
                     case 3:
-                        Console.WriteLine("");
+                        Console.WriteLine("Будёновка с серпом и молотом");
                         break;
                 }
-                switch (ArmorNow.BodyArmor)
+                switch (BodyArmor)
                 {
+                   case 0:
+                        Console.WriteLine("Деловитый пиджак");
+                        break;
                    case 1:
-                        Console.WriteLine("");
+                        Console.WriteLine("Порванное пальто");
                         break;
                     case 2:
-                        Console.WriteLine("");
+                        Console.WriteLine("Спортивная кофта");
                         break; 
                     case 3:
-                        Console.WriteLine("");
+                        Console.WriteLine("Моднявая коженка");
                         break;
                 }
-                switch(ArmorNow.Pants)
+                switch(Pants)
                 {
+                    case 0:
+                        Console.WriteLine("Семейники");
+                        break;
                     case 1:
-                        Console.WriteLine("");
+                        Console.WriteLine("Спортивные штаны");
                         break;
                     case 2:
-                        Console.WriteLine("");
+                        Console.WriteLine("Джинсы");
                         break;
                     case 3:
-                        Console.WriteLine("");
+                        Console.WriteLine(" 'Тупо тема бунтаря' ");
                         break;
                 }
             }
         }
         class Market
         {
-            public int HelmetCondition;
-            public int BodyArmorCondition;
-            public int PantsCondition;
+            //public int HelmetCondition;
+            //public int BodyArmorCondition;
+            //public int PantsCondition;
             public Market()
             {
-                Armor armor = new Armor();
-                HelmetCondition = armor.Helmet;
-                BodyArmorCondition = armor.BodyArmor;
-                PantsCondition = armor.Pants;
+                //Armor armor = new Armor();
+                //HelmetCondition = Armor.Helmet;
+                //BodyArmorCondition = Armor.BodyArmor;
+                //PantsCondition = Armor.Pants;
                
             }
             public static void Buying()
             {
-                Market market = new Market();
+               // Market market = new Market();
                 Start:
                 Console.WriteLine("Что хотите приобрести? \n 1-Апгрейд ушанки \n 2-Апгрейд делового пиджака \n 3-Апгрейд спортивок \n 4-Покупка расходников \n 5-Продажа расходников ");
                 int entering = Convert.ToInt32(Console.ReadLine());
@@ -867,21 +884,63 @@ namespace ConsoleApp20
 
                 {
                     case 1:
-                        switch (market.HelmetCondition)
+                        switch (Armor.Helmet)
                         {
-                            
+                            case 0:
+                                Console.WriteLine("Прикупить дедовскую ушанку");
+                                Console.BackgroundColor = ConsoleColor.DarkYellow;
+                                Console.WriteLine("");
+                                Console.ResetColor();
+                                string buy = Console.ReadLine();
+                                switch (buy)
+                                {
+                                    //case "y":
+                                    //    if (Coins<)
+                                }
+                                break;
+                            case 1:
+                                Console.WriteLine("Вместо старой ушанки купить будёновку");
+                                break;
+                            case 2:
+                                Console.WriteLine("Купить серп и молот для  будёновки ");
+                                break;
+                            case 3:
+                                Console.WriteLine("У вас самый модный головной убор");
+                                break;
                         }
                         break;
                     case 2:
-                        switch (market.BodyArmorCondition)
+                        switch (Armor.BodyArmor)
                         {
-
+                            case 0:
+                                Console.WriteLine("Купить ,пальто вместо этого буржуйского пиджака ");
+                                break;
+                            case 1:
+                                Console.WriteLine("Приобрести кофтан Abibas");
+                                break;
+                            case 2:
+                                Console.WriteLine("Купить воненепробиваемую броню( коженку )");
+                                break;
+                            case 3:
+                                Console.WriteLine("Лучше вашей коженки нет ничего (в этом микрорайоне)");
+                                break;
                         }
                         break;
                     case 3:
-                        switch (market.PantsCondition)
+                        switch (Armor.Pants)
                         {
-
+                            case 0:
+                                Console.WriteLine("Купить спортивки и получить увагу пацанов");
+                                break;
+                            case 1:
+                                Console.WriteLine("Стать элитой и прикупить джинсовок");
+                                break;
+                            case 2:
+                                Console.WriteLine("Приобрести 'Чисто пацанская тема'(они реально так называются) ");
+                                break;
+                            case 3:
+                                Console.WriteLine("Это лучшее ,что здесь можно приобрести ");
+                                break;
                         }
                         break;
                     case 4:
@@ -898,10 +957,7 @@ namespace ConsoleApp20
                             goto Start;
                         }
                         break;
-                }
-            
-                Console.WriteLine();
-            
+                }                                       
             }
             
             
@@ -920,8 +976,23 @@ namespace ConsoleApp20
             {
 
             }
-            public void EnterAdventure()
+            public void EnterAdventure(string choice)
             {
+                if (choice == "b") Market.Buying();
+                else if (choice == "a") Armor.YourArmor();
+                else if (choice=="i")
+                {
+                    Console.WriteLine("Содержимое рюкзака:");
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.WriteLine("Шаверма из местной фауны " + Shava +" штук");
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                    Console.WriteLine("Портвейн Мгновения Ярость ,а также шевенизм ,рассизм ,коммунизм ,что-то из этого . " + Portvein777 + "штук(и)");
+                    Console.ForegroundColor = ConsoleColor.DarkYellow;
+                    Console.WriteLine(Coins + " деревянных");
+                }
+                
+
+
 
             }
         }
